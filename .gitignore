@@ -1,0 +1,7 @@
+*/.bsp
+*/.idea
+*/target
+*target/
+*dotty-ide*
+*/config.env
+**/.stack-work
