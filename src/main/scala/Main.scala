@@ -3,15 +3,16 @@ import effects.IO.given
 import effects.syntax._
 import model.Mastermind
 import model.Mastermind._
-import typeclasses.Show._
-import typeclasses.syntax._
+import typeclasses._
+import typeclasses.syntax.monad._
 
 @main def game: Unit = {
 
   IO.runIO {
     for {
-      value <- Console[IO].read
-      _     <- s"Hey $value".writeLn
+      input <- Console[IO].read
+      board <- IO.fromEither(Board.parseInitialBoard(input).left.map(s => new Exception(s)))
+      _     <- s"Board is: ${Show[Board].show(board)}".writeLn
     } yield ()
   }
 

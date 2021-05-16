@@ -7,5 +7,5 @@ trait ReadOps:
   extension [T](s: String)(using r: Read[T]) def read: Option[T] = r.read(s)
 
 object Read {
-  extension [T: Read](s: String) def read: Option[T] = summon[Read[T]].read(s)
+  def apply[T: Read]: Read[T] = summon[Read[T]]
 }
