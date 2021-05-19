@@ -1,8 +1,7 @@
 import effects._
 import effects.IO.given
 import effects.syntax._
-import model.Mastermind
-import model.Mastermind._
+import model.Board
 import typeclasses._
 import typeclasses.syntax.monad._
 

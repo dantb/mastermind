@@ -1,6 +1,5 @@
 package typeclasses
 
-import model.Mastermind.{Board, CodePeg}
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

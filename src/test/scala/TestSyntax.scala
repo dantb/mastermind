@@ -2,7 +2,7 @@
 import org.junit.Test
 import org.junit.Assert._
 import typeclasses.Show.show
-import model.Mastermind._
+import model._
 
 import typeclasses.syntax.syntax._
 
