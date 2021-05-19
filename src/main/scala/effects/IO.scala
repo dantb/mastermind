@@ -31,5 +31,7 @@ object IO:
     }
     def pure[A](a: A): IO[A] = IO.Pure(a)
 
+  given Sync[IO] = new Sync[IO]:
+    def delay[A](a: => A): IO[A] = IO.Suspended(() => a)
 
 end IO

@@ -10,8 +10,10 @@ import typeclasses.syntax.monad._
 
   IO.runIO {
     for {
-      input <- Console[IO].read
-      board <- IO.fromEither(Board.parseInitialBoard(input).left.map(s => new Exception(s)))
+      _     <- Console[IO].writeLn("What's your name?")
+      name  <- Console[IO].read
+      _     <- Console[IO].writeLn(s"Hi $name, we're going to play mastermind. We've selected 4 random coloured pegs")
+      board <- Board.random[IO](4)
       _     <- s"Board is: ${Show[Board].show(board)}".writeLn
     } yield ()
   }

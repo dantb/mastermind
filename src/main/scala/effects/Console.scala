@@ -6,8 +6,9 @@ trait Console[F[_]]:
   def writeLn(str: String): F[Unit] = write(str + "\n")
 
 trait ConsoleOps:
-  extension [F[_]: Console](s: String) def write: F[Unit] = Console[F].write(s)
-  extension [F[_]: Console](s: String) def writeLn: F[Unit] = Console[F].writeLn(s)
+  extension [F[_]: Console](s: String)
+    def write: F[Unit] = Console[F].write(s)
+    def writeLn: F[Unit] = Console[F].writeLn(s)
 
 object Console {
   def apply[F[_]](using c: Console[F]) = c
