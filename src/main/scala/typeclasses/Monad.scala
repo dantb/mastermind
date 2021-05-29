@@ -11,8 +11,8 @@ trait MonadOps:
     def flatMap[B](f: A => F[B]): F[B] = Monad[F].flatMap(fa)(f)
     def map[B](f: A => B): F[B] = Monad[F].map(fa)(f)
 
-  extension [F[_]: Monad, A](a: A)
-    def pure: F[A] = Monad[F].pure(a)
+  extension [A](a: A)
+    def pure[F[_]: Monad]: F[A] = Monad[F].pure(a)
 
   extension [F[_]: Monad, A](ffa: F[F[A]])
     def flatten: F[A] = Monad[F].flatten(ffa)
