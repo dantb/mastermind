@@ -4,8 +4,8 @@ import typeclasses.Monad
 
 enum IO[A]:
   case Suspended(thunk: () => A) extends IO[A]
-  case Pure(a: A) extends IO[A]
-  case Error(e: Throwable) extends IO[A]
+  case Pure(a: A)                extends IO[A]
+  case Error(e: Throwable)       extends IO[A]
 
 object IO:
   def runIO[A](io: IO[A]): A =

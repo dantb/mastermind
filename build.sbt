@@ -5,8 +5,10 @@ lazy val root = project
   .settings(
     name := "mastermind",
     version := "0.1.0",
-
     scalaVersion := scala3Version,
-
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+    libraryDependencies ++=
+      Seq(
+        "org.scalameta" %% "munit" % "0.7.26" % Test,
+        "org.scalameta" %% "munit-scalacheck" % "0.7.26" % Test
+      )
   )
