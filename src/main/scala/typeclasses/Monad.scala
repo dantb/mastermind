@@ -10,6 +10,7 @@ trait MonadOps:
   extension [F[_]: Monad, A](fa: F[A])
     def flatMap[B](f: A => F[B]): F[B] = Monad[F].flatMap(fa)(f)
     def map[B](f: A => B): F[B] = Monad[F].map(fa)(f)
+    def as[B](b: B): F[B] = Monad[F].map(fa)(_ => b)
 
   extension [A](a: A)
     def pure[F[_]: Monad]: F[A] = Monad[F].pure(a)
