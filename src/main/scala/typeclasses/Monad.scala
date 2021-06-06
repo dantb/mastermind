@@ -21,4 +21,6 @@ trait MonadOps:
 object Monad:
   def apply[F[_]](using m: Monad[F]): Monad[F] = m
 
+  given [E, F[_]](using MonadError[F, Throwable]): Monad[F] = MonadError[F, Throwable].monad
+
 end Monad

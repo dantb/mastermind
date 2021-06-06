@@ -1,6 +1,8 @@
 package effects
 
-import typeclasses.Monad
+import typeclasses.{Monad, MonadThrow}
+
+import scala.util.Try
 
 enum IO[A]:
   case Suspended(thunk: () => A) extends IO[A]
@@ -33,5 +35,13 @@ object IO:
 
   given Sync[IO] = new Sync[IO]:
     def delay[A](a: => A): IO[A] = IO.Suspended(() => a)
+
+  given MonadThrow[IO] = new MonadThrow[IO]:
+    def raiseError[A](e: Throwable): IO[A] = IO.Error(e)
+    def handleErrorWith[A](fa: IO[A])(f: Throwable => IO[A]): IO[A] = fa match {
+      case Error(e)         => f(e)
+      case Suspended(thunk) => Try(Suspended(thunk)).fold(f, identity)
+      case Pure(a)          => Pure(a)
+    }
 
 end IO
