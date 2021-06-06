@@ -2,5 +2,5 @@ package model
 
 import typeclasses.Show
 
-enum KeyPeg derives Show:
+enum KeyPeg:
   case White, Black, Missed
