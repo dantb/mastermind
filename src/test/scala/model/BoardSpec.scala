@@ -13,7 +13,7 @@ class BoardSpec extends munit.FunSuite {
 
   test("Read[CodeRow[5]] should be able to parse a string into a CodeRow[5]") {
     val expected = (CodePeg.Yellow, CodePeg.Yellow, CodePeg.Blue, CodePeg.Yellow, CodePeg.Green)
-    assertEquals(Read[CodeRow[4]].read("yybyg"), None)
+    assertEquals(Read[CodeRow[5]].read("yybyg"), Some(expected))
   }
 
   test("Read[CodeRow[4]] should return None for too large an input") {
