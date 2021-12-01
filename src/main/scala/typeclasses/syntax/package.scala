@@ -1,9 +1,8 @@
 package typeclasses
 
-import typeclasses._
+import typeclasses.*
 
-package object syntax {
-
+package object syntax:
   object monad extends MonadOps
 
   object applicative extends ApplicativeOps
@@ -20,11 +19,9 @@ package object syntax {
 
   object all
       extends ShowOps
-      with ReadOps
-      with MonadOps
-      with ApplicativeOps
-      with TraverseOps
-      with TupleOps
-      with FunctorOps
-
-}
+         with ReadOps
+         with MonadOps
+         with ApplicativeOps
+         with TraverseOps
+         with TupleOps
+         with FunctorOps

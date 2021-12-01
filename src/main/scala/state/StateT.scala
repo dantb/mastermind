@@ -3,15 +3,15 @@ package state
 import effects.Console
 import model.*
 import typeclasses.syntax.monad.*
-import typeclasses.{Functor, Monad, Show, Read, MonadThrow}
+import typeclasses.{ Functor, Monad, Show, Read, MonadThrow }
 
 final case class StateT[F[_], S, A](
-  run: S => F[(S, A)]
-):
-  def get(using Functor[F]): StateT[F, S, S] = StateT(s0 => Functor[F].map(run(s0))((s1, _) => (s1, s1)))
+    run: S => F[(S, A)]
+  ):
+  def get(using Functor[F]): StateT[F, S, S] =
+    StateT(s0 => Functor[F].map(run(s0))((s1, _) => (s1, s1)))
 
 object StateT:
-
   def pure[F[_]: Monad, S, A](a: A): StateT[F, S, A] = StateT(s => Monad[F].pure((s, a)))
 
   enum GameState:
@@ -22,7 +22,10 @@ object StateT:
       StateT(s0 => Monad[F].flatMap(fa.run(s0))((s1, a) => f(a).run(s1)))
     def pure[A](a: A): StateT[F, S, A] = StateT.pure(a)
 
-  def game[F[_]: Monad: MonadThrow: Console, Size <: Int: ValueOf]: StateT[F, Board[Size], GameState] =
+  def game[
+      F[_]: Monad: MonadThrow: Console,
+      Size <: Int: ValueOf,
+    ]: StateT[F, Board[Size], GameState] =
     for {
       _ <- StateT.pure(())
       gameState <- loop[F, Size]
@@ -32,21 +35,28 @@ object StateT:
         case GameState.End => StateT.pure(gameState)
     } yield outcome
 
-  def loop[F[_]: Monad: MonadThrow: Console, Size <: Int: ValueOf]: StateT[F, Board[Size], GameState] =
+  def loop[
+      F[_]: Monad: MonadThrow: Console,
+      Size <: Int: ValueOf,
+    ]: StateT[F, Board[Size], GameState] =
     StateT(s =>
       for {
         codeRow <- readAttempt[F, Size]
-        state <- isGameOver[Size](s.copy(completedRows = Board.completeRow[Size](s.targetRow, codeRow) :: s.completedRows)) match {
+        state <- isGameOver[Size](
+          s.copy(completedRows = Board.completeRow[Size](s.targetRow, codeRow) :: s.completedRows)
+        ) match {
           case true => GameState.End.pure[F]
-          case false =>  showBoard[F, Size](s).as[GameState](GameState.InProgress)
+          case false => showBoard[F, Size](s).as[GameState](GameState.InProgress)
         }
       } yield (s, state)
     )
 
   def readAttempt[F[_]: Monad: MonadThrow: Console, Size <: Int: ValueOf]: F[CodeRow[Size]] =
     for {
-      _       <- Console[F].writeLn(s"Please enter your next guess in the form 'rgry' meaning 'Red Green Red Yellow'")
-      input   <- Console[F].read
+      _ <- Console[F].writeLn(
+        s"Please enter your next guess in the form 'rgry' meaning 'Red Green Red Yellow'"
+      )
+      input <- Console[F].read
       codeRow <- parseInput(input).fold(s => MonadThrow[F].raiseError(new Exception(s)), _.pure[F])
     } yield codeRow
 
@@ -58,4 +68,3 @@ object StateT:
 
   def showBoard[F[_]: Console, Size <: Int: ValueOf](board: Board[Size]): F[Unit] =
     Console[F].writeLn(Show[Board[Size]].show(board))
-

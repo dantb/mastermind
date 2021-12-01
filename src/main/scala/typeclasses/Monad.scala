@@ -12,11 +12,9 @@ trait MonadOps:
     def map[B](f: A => B): F[B] = Monad[F].map(fa)(f)
     def as[B](b: B): F[B] = Monad[F].map(fa)(_ => b)
 
-  extension [A](a: A)
-    def pure[F[_]: Monad]: F[A] = Monad[F].pure(a)
+  extension [A](a: A) def pure[F[_]: Monad]: F[A] = Monad[F].pure(a)
 
-  extension [F[_]: Monad, A](ffa: F[F[A]])
-    def flatten: F[A] = Monad[F].flatten(ffa)
+  extension [F[_]: Monad, A](ffa: F[F[A]]) def flatten: F[A] = Monad[F].flatten(ffa)
 
 object Monad:
   def apply[F[_]](using m: Monad[F]): Monad[F] = m

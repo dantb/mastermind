@@ -1,13 +1,12 @@
 package typeclasses
 
 import scala.deriving.Mirror
-import scala.compiletime.{constValue, erasedValue, summonInline}
+import scala.compiletime.{ constValue, erasedValue, summonInline }
 
-/**
- * Trait can be used for simple derivation, by implementing deriveCaseClass and deriveSealed. Taken from:
- * https://blog.philipp-martini.de/blog/magic-mirror-scala3/
- */
-trait EasyDerive[TC[_]] {
+/** Trait can be used for simple derivation, by implementing deriveCaseClass and deriveSealed. Taken from:
+  * https://blog.philipp-martini.de/blog/magic-mirror-scala3/
+  */
+trait EasyDerive[TC[_]]:
   def deriveCaseClass[A](caseClassType: CaseClassType[A]): TC[A]
 
   def deriveSealed[A](sealedType: SealedType[A]): TC[A]
@@ -18,43 +17,45 @@ trait EasyDerive[TC[_]] {
       label: String,
       typeclass: TC[B],
       getValue: A => B,
-      idx: Int)
+      idx: Int,
+    )
 
   case class CaseClassType[A](
       label: String,
       elements: List[
-        CaseClassElement[A, _]
-      ] /*, fromElements: List[Any] => A */)
+        CaseClassElement[A, ?]
+      ], /*, fromElements: List[Any] => A */
+    )
 
   case class SealedElement[A, B](
       label: String,
       typeclass: TC[B],
       idx: Int,
-      cast: A => B)
+      cast: A => B,
+    )
 
   case class SealedType[A](
       label: String,
-      elements: List[SealedElement[A, _]],
-      getElement: A => SealedElement[A, _])
+      elements: List[SealedElement[A, ?]],
+      getElement: A => SealedElement[A, ?],
+    )
 
   inline final def getInstances[A <: Tuple]: List[TC[Any]] =
-    inline erasedValue[A] match {
+    inline erasedValue[A] match
       case _: EmptyTuple => Nil
       case _: (t *: ts) =>
         summonInline[TC[t]].asInstanceOf[TC[Any]] :: getInstances[ts]
-    }
 
   inline final def getElemLabels[A <: Tuple]: List[String] =
-    inline erasedValue[A] match {
+    inline erasedValue[A] match
       case _: EmptyTuple => Nil
-      case _: (t *: ts)  => constValue[t].toString :: getElemLabels[ts]
-    }
+      case _: (t *: ts) => constValue[t].toString :: getElemLabels[ts]
 
-  inline final given derived[A](using m: Mirror.Of[A]): TC[A] = {
+  inline final given derived[A](using m: Mirror.Of[A]): TC[A] =
     val label = constValue[m.MirroredLabel]
     val elemInstances = getInstances[m.MirroredElemTypes]
     val elemLabels = getElemLabels[m.MirroredElemLabels]
-    m match {
+    m match
       case s: Mirror.SumOf[A] =>
         val elements = elemInstances.zip(elemLabels).zipWithIndex.map {
           case ((inst, lbl), idx) =>
@@ -62,21 +63,21 @@ trait EasyDerive[TC[_]] {
               lbl,
               inst.asInstanceOf[TC[Any]],
               idx,
-              identity
+              identity,
             )
         }
         val getElement = (a: A) => elements(s.ordinal(a))
         deriveSealed(SealedType[A](label, elements, getElement))
 
       case p: Mirror.ProductOf[A] =>
-        val caseClassElements: List[CaseClassElement[A, _]] =
+        val caseClassElements: List[CaseClassElement[A, ?]] =
           elemInstances.zip(elemLabels).zipWithIndex.map {
             case ((inst: TC[Any], lbl: String), idx: Int) =>
               CaseClassElement[A, Any](
                 lbl,
                 inst,
                 (x: A) => x.asInstanceOf[scala.Product].productElement(idx),
-                idx
+                idx,
               )
           }
 //        val fromElements: List[Any] => A = { elements =>
@@ -92,6 +93,3 @@ trait EasyDerive[TC[_]] {
         deriveCaseClass(
           CaseClassType[A](label, caseClassElements /*, fromElements */ )
         )
-    }
-  }
-}

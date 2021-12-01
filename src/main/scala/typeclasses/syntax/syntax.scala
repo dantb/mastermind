@@ -1,10 +1,5 @@
 package typeclasses.syntax
 
-import typeclasses._
+import typeclasses.*
 
-object syntax
-    extends ShowOps
-    with ReadOps
-    with MonadOps
-    with ApplicativeOps
-    with TraverseOps
+object syntax extends ShowOps with ReadOps with MonadOps with ApplicativeOps with TraverseOps

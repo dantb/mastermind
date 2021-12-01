@@ -10,7 +10,5 @@ trait ConsoleOps:
     def write: F[Unit] = Console[F].write(s)
     def writeLn: F[Unit] = Console[F].writeLn(s)
 
-object Console {
+object Console:
   def apply[F[_]](using c: Console[F]) = c
-
-}

@@ -9,7 +9,6 @@ trait ShowOps:
   extension [T](t: T)(using s: Show[T]) def show: String = s.show(t)
 
 object Show extends EasyDerive[Show] with ShowOps:
-
   def red(str: String) = AnsiColor.RED ++ str ++ AnsiColor.RESET
   def green(str: String) = AnsiColor.GREEN ++ str ++ AnsiColor.RESET
   def blue(str: String) = AnsiColor.BLUE ++ str ++ AnsiColor.RESET
@@ -22,9 +21,12 @@ object Show extends EasyDerive[Show] with ShowOps:
     def show(t: T): String =
       if (caseClassType.elements.isEmpty) caseClassType.label
       else
-        caseClassType.elements.map { (p: CaseClassElement[T, ?]) =>
-          s"${p.label}=${p.typeclass.show(p.getValue(t))}"
-        }.mkString(s"${caseClassType.label}(", ", ", ")")
+        caseClassType
+          .elements
+          .map { (p: CaseClassElement[T, ?]) =>
+            s"${p.label}=${p.typeclass.show(p.getValue(t))}"
+          }
+          .mkString(s"${caseClassType.label}(", ", ", ")")
 
   // Shouldn't the below be equivalent to SealedElement[T, _]? Doesn't seem to be.
   //  type Thing[T] = [Leaf] =>> SealedElement[T, Leaf]
@@ -33,4 +35,5 @@ object Show extends EasyDerive[Show] with ShowOps:
     def show(t: T): String =
       val elem: SealedElement[T, ?] = sealedType.getElement(t)
       elem.typeclass.show(elem.cast(t))
+
   }

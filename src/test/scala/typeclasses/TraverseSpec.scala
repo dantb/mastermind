@@ -2,7 +2,7 @@ package typeclasses
 
 import munit.FunSuite
 
-class TraverseSpec extends munit.FunSuite {
+class TraverseSpec extends munit.FunSuite:
   test("Traverse[List] should sequence a list of 'Some's") {
     val input: List[Option[Int]] = List(Option(1), Option(2), Option(3))
     val output: Option[List[Int]] = Traverse[List].sequence(input)
@@ -26,4 +26,3 @@ class TraverseSpec extends munit.FunSuite {
     val output: Option[List[String]] = Traverse[List].traverse(input)(i => if (i % 2 == 0) None else Option((i + 1).toString))
     assertEquals(output, None)
   }
-}

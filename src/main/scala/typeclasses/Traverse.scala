@@ -11,14 +11,11 @@ trait TraverseOps:
   extension [F[_]: Traverse, G[_]: Applicative, A](fga: F[G[A]])
     def sequence: G[F[A]] = Traverse[F].sequence(fga)
 
-
-object Traverse extends ApplicativeOps {
+object Traverse extends ApplicativeOps:
   def apply[F[_]](using t: Traverse[F]): Traverse[F] = t
 
   given Traverse[List] = new Traverse[List]:
-   def traverse[G[_]: Applicative, A, B](fa: List[A])(f: A => G[B]): G[List[B]] =
-     fa.foldRight(Applicative[G].pure(Nil)) { (a, acc) =>
-       acc.product(f(a)).map((accc, aa) => aa :: accc)
-     }
-
-}
+    def traverse[G[_]: Applicative, A, B](fa: List[A])(f: A => G[B]): G[List[B]] =
+      fa.foldRight(Applicative[G].pure(Nil)) { (a, acc) =>
+        acc.product(f(a)).map((accc, aa) => aa :: accc)
+      }

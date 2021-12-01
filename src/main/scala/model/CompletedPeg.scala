@@ -1,6 +1,6 @@
 package model
 
-import model.CodePeg.{Blue, Green, Red, Yellow}
+import model.CodePeg.{ Blue, Green, Red, Yellow }
 import typeclasses.Show
 
 import scala.io.AnsiColor
@@ -15,7 +15,7 @@ object CompletedPeg:
         case KeyPeg.Black => AnsiColor.BLACK ++ "@" ++ AnsiColor.RESET
         case KeyPeg.Missed => ""
       s"${Show[CodePeg].show(t.codePeg)} $keyPeg"
-  
+
   def white(codePeg: CodePeg): CompletedPeg = CompletedPeg(codePeg, KeyPeg.White)
   def black(codePeg: CodePeg): CompletedPeg = CompletedPeg(codePeg, KeyPeg.Black)
   def missed(codePeg: CodePeg): CompletedPeg = CompletedPeg(codePeg, KeyPeg.Missed)

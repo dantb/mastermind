@@ -1,13 +1,13 @@
 package effects
 
 import munit.ScalaCheckSuite
-import org.scalacheck.Prop._
+import org.scalacheck.Prop.*
 import org.scalacheck.{Arbitrary, Gen}
-import typeclasses.syntax.monad._
+import typeclasses.syntax.monad.*
 
 import scala.util.Random
 
-class IOSpec extends ScalaCheckSuite {
+class IOSpec extends ScalaCheckSuite:
 
   val random = new Random()
 
@@ -28,4 +28,3 @@ class IOSpec extends ScalaCheckSuite {
     }
   }
 
-}
